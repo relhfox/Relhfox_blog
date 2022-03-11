@@ -1,12 +1,37 @@
 from flask import Blueprint
 from flask import render_template
 from flask import request
+from flask import redirect
+from flask import url_for
 
 from models import Post
 from models import Tag
 
+from posts.forms import PostForm
+from app import db
+
 
 posts = Blueprint('posts', __name__, template_folder='templates')
+
+
+@posts.route('/create', methods=['POST', 'GET'])
+def create_post():
+    if request.method == 'POST':
+        post_title = request.form['title']
+        post_body = request.form['body']
+        try:
+            post = Post(title=post_title, body=post_body)
+            if post.title == '':
+                return redirect(url_for('posts.create_post'))
+            else:
+                db.session.add(post)
+                db.session.commit()
+        except:
+            print('Произошла какая-то ошибка')
+        return redirect(url_for('posts.index'))
+    else:
+        post_form = PostForm()
+        return render_template('posts/create_post.html', form=post_form)
 
 
 @posts.route('/')
@@ -15,7 +40,7 @@ def index():
     if search_req:
         all_posts = Post.query.filter(Post.title.contains(search_req) | Post.body.contains(search_req)).all()
     else:
-        all_posts = Post.query.all()
+        all_posts = Post.query.order_by(Post.created.desc())
     return render_template('posts/index.html', posts=all_posts)
 
 
