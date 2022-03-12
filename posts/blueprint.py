@@ -37,11 +37,17 @@ def create_post():
 @posts.route('/')
 def index():
     search_req = request.args.get('search')
-    if search_req:
-        all_posts = Post.query.filter(Post.title.contains(search_req) | Post.body.contains(search_req)).all()
+    curr_page = request.args.get('page')
+    if curr_page and curr_page.isdigit():
+        curr_page = int(curr_page)
     else:
-        all_posts = Post.query.order_by(Post.created.desc())
-    return render_template('posts/index.html', posts=all_posts)
+        curr_page = 1
+    if search_req:
+        all_posts = Post.query.filter(Post.title.contains(search_req) | Post.body.contains(search_req))
+    else:
+        all_posts = Post.query.order_by(Post.id.desc())
+    all_pages = all_posts.paginate(page=curr_page, per_page=5)
+    return render_template('posts/index.html', pages=all_pages)
 
 
 @posts.route('/<slug>')
