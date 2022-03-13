@@ -34,6 +34,18 @@ def create_post():
         return render_template('posts/create_post.html', form=post_form)
 
 
+@posts.route('/<slug>/edit/', methods=['POST', 'GET'])
+def edit_post(slug):
+    post_to_edit = Post.query.filter(Post.slug == slug).first()
+    if request.method == 'POST':
+        post_form = PostForm(formdata=request.form, obj=post_to_edit)
+        post_form.populate_obj(post_to_edit)
+        db.session.commit()
+        return redirect(url_for('posts.open_post', slug=post_to_edit.slug))
+    post_form = PostForm(obj=post_to_edit)
+    return render_template('posts/edit_post.html', post=post_to_edit, form=post_form)
+
+
 @posts.route('/')
 def index():
     search_req = request.args.get('search')
@@ -52,13 +64,13 @@ def index():
 
 @posts.route('/<slug>')
 def open_post(slug):
-    post_to_open = Post.query.filter(Post.slug==slug).first()
+    post_to_open = Post.query.filter(Post.slug == slug).first()
     tags_to_show = post_to_open.tags
     return render_template('posts/open_post.html', post=post_to_open, tags=tags_to_show)
 
 
 @posts.route('/tag/<slug>')
 def tag_detail(slug):
-    tag_to_open = Tag.query.filter(Tag.slug==slug).first()
+    tag_to_open = Tag.query.filter(Tag.slug == slug).first()
     posts_of_tag = tag_to_open.posts.all()
     return render_template('posts/tag_detail.html', tag=tag_to_open, posts=posts_of_tag)
