@@ -5,10 +5,15 @@ import re
 from flask_security import UserMixin
 from flask_security import RoleMixin
 
+from random import randint
+
 
 def slugify(string_to_slug):
     pattern = r'[^\w+]'
-    return re.sub(pattern, '-', string_to_slug)
+    slugged = re.sub(pattern, '_', string_to_slug).strip('_').lower() + '_' + str(randint(10, 99))
+    while '__' in slugged:
+        slugged = slugged.replace('__', '_')
+    return slugged
 
 
 post_tags = db.Table('post_tags',
@@ -46,6 +51,10 @@ class Tag(db.Model):
     def __init__(self, *args, **kwargs):
         super(Tag, self).__init__(*args, **kwargs)
         self.slug = slugify(self.name)
+
+    def generate_slug(self):
+        if self.name:
+            self.slug = slugify(self.name)
 
     def __repr__(self):
         return '{}'.format(self.name)
