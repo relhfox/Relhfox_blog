@@ -25,24 +25,40 @@
                 {% if not pages.has_prev %}
                     class="page-item disabled"
                 {% endif %}>
-                <a class="page-link" href="./?page={{ pages.prev_num }}">Предыдущая</a>
+                <a class="page-link" href="./?page={{ pages.prev_num }}{% if search %}&search={{ search }}{% endif %}">
+                    Предыдущая
+                </a>
             </li>
 
             {% for page in pages.iter_pages() %}
-                <li
-                    {% if page == pages.page %}
-                        class="page-item active"
-                    {% endif %}
-                    aria-current="page">
-                    <a class="page-link" href="./?page={{ page }}">{{ page }}</a>
-                </li>
+
+                {% if page != None %}
+                    <li
+                        {% if page == pages.page %}
+                            class="page-item active"
+                        {% endif %}
+                        aria-current="page">
+                        <a class="page-link" href="./?page={{ page }}{% if search %}&search={{ search }}{% endif %}">
+                            {{ page }}
+                        </a>
+                    </li>
+
+                {% else %}
+
+                    <li class="page-item disabled">
+                        <a class="page-link">...</a>
+                    </li>
+                {% endif %}
+
             {% endfor %}
 
             <li
                 {% if not pages.has_next %}
                     class="page-item disabled"
                 {% endif %}>
-                <a class="page-link" href="./?page={{ pages.next_num }}">Следующая</a>
+                <a class="page-link" href="./?page={{ pages.next_num }}{% if search %}&search={{ search }}{% endif %}">
+                    Следующая
+                </a>
             </li>
       </ul>
     </nav>

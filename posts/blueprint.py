@@ -63,7 +63,7 @@ def index():
     else:
         all_posts = Post.query.order_by(Post.id.desc())
     all_pages = all_posts.paginate(page=curr_page, per_page=5)
-    return render_template('posts/index.html', pages=all_pages)
+    return render_template('posts/index.html', pages=all_pages, search=search_req)
 
 
 @posts.route('/<slug>')
