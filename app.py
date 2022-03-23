@@ -35,6 +35,14 @@ class AdminMixin:
         return redirect(url_for('security.login', next=request.url))
 
 
+class OwnerMixin:
+    def is_accessible(self):
+        return current_user.has_role('owner')
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for('security.login', next=request.url))
+
+
 class BaseModelView(ModelView):
     def on_model_change(self, form, model, is_created):
         model.generate_slug()
@@ -57,9 +65,15 @@ class TagAdminView(AdminMixin, BaseModelView):
     form_columns = ['name', 'posts']
 
 
-admin = Admin(app, 'Вернуться', url='/', index_view=HomeAdminView(name='Home'))
+class UserRoleView(OwnerMixin, BaseModelView):
+    pass
+
+
+admin = Admin(app, 'Вернуться', url='/', index_view=HomeAdminView(name='Выберите -->'))
 admin.add_view(PostAdminView(Post, db.session))
 admin.add_view(TagAdminView(Tag, db.session))
+admin.add_view(UserRoleView(User, db.session))
+admin.add_view(UserRoleView(Role, db.session))
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 security = Security(app, user_datastore)

@@ -27,7 +27,7 @@ class Post(db.Model):
     title = db.Column(db.String(140))
     slug = db.Column(db.String(140), unique=True)
     body = db.Column(db.Text)
-    created = db.Column(db.DateTime, default=datetime.now())
+    created = db.Column(db.DateTime, default=datetime.now)
 
     def __init__(self, *args, **kwargs):
         super(Post, self).__init__(*args, **kwargs)
@@ -73,8 +73,17 @@ class User(db.Model, UserMixin):
     active = db.Column(db.Boolean)
     roles = db.relationship('Role', secondary=users_roles, backref=db.backref('users', lazy='dynamic'))
 
+    def generate_slug(self):
+        pass
+
 
 class Role(db.Model, RoleMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True)
     description = db.Column(db.String(255))
+
+    def generate_slug(self):
+        pass
+
+    def __repr__(self):
+        return '{}'.format(self.name)
