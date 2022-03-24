@@ -75,6 +75,13 @@ def open_post(slug):
 
 @posts.route('/tag/<slug>')
 def tag_detail(slug):
+    tag_slug = slug
     tag_to_open = Tag.query.filter(Tag.slug == slug).first()
-    posts_of_tag = tag_to_open.posts.all()
-    return render_template('posts/tag_detail.html', tag=tag_to_open, posts=posts_of_tag)
+    posts_of_tag = Post.query.filter(Post.tags.contains(tag_to_open))
+    curr_page = request.args.get('page')
+    if curr_page and curr_page.isdigit():
+        curr_page = int(curr_page)
+    else:
+        curr_page = 1
+    all_pages = posts_of_tag.paginate(page=curr_page, per_page=5)
+    return render_template('posts/tag_detail.html', pages=all_pages, tag=tag_to_open, slug=tag_slug)

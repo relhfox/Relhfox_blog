@@ -12,9 +12,55 @@
 
 
 {% block content %}
-    {% for post in posts %}
-        <div class="post">
+
+    {% for post in pages.items %}
+        <p>
             <a href="{{ url_for('posts.open_post', slug=post.slug) }}">{{ post.title }}</a>
-        </div>
+        </p>
     {% endfor %}
+
+    <nav>
+      <ul class="pagination">
+            <li
+                {% if not pages.has_prev %}
+                    class="page-item disabled"
+                {% endif %}>
+                <a class="page-link" href="./{{ slug }}?page={{ pages.prev_num }}">
+                    Предыдущая
+                </a>
+            </li>
+
+            {% for page in pages.iter_pages() %}
+
+                {% if page != None %}
+                    <li
+                        {% if page == pages.page %}
+                            class="page-item active"
+                        {% endif %}
+                        aria-current="page">
+                        <a class="page-link" href="./{{ slug }}?page={{ page }}">
+                            {{ page }}
+                        </a>
+                    </li>
+
+                {% else %}
+
+                    <li class="page-item disabled">
+                        <a class="page-link">...</a>
+                    </li>
+                {% endif %}
+
+            {% endfor %}
+
+            <li
+                {% if not pages.has_next %}
+                    class="page-item disabled"
+                {% endif %}>
+                <a class="page-link" href="./{{ slug }}?page={{ pages.next_num }}">
+                    Следующая
+                </a>
+            </li>
+      </ul>
+    </nav>
+
 {% endblock %}
