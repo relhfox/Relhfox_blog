@@ -26,9 +26,7 @@
 
         {% if current_user.has_role('admin') %}
             <p>
-                <a href="{{ url_for('posts.edit_post', slug=post.slug) }}">
-                    <button class="btn btn-primary">Редактировать</button>
-                </a>
+                <a href="{{ url_for('posts.edit_post', slug=post.slug) }}" class="btn btn-primary">Редактировать</a>
             </p>
         {% endif %}
     </div>
