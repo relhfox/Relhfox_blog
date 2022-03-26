@@ -7,10 +7,11 @@
 
 
 {% block content_title %}
+    <br />
     {% if search %}
         Все посты содержащие "{{ search }}"
     {% else %}
-        Новые посты
+        Последние посты
     {% endif %}
 {% endblock %}
 
@@ -18,7 +19,7 @@
 {% block content %}
 
     {% for post in pages.items %}
-        <p>
+        <br />
         <div class="card w-75">
           <div class="card-header">
             <a href="{{ url_for('posts.open_post', slug=post.slug) }}">{{ post.created }}</a>
@@ -30,7 +31,7 @@
                     <span class="badge bg-success">{{ tag.name }}</span>
                 </a>
             {% endfor %}
-            <p class="card-text">{{ post.body }}</p>
+            <p class="card-text">{{ post.body|replace("\n", "<br />")|safe }}</p>
             {% if current_user.has_role('admin') %}
               <div class="d-flex justify-content-end">
                 <a href="{{ url_for('posts.edit_post', slug=post.slug) }}" class="btn btn-primary">Редактировать</a>
@@ -40,7 +41,7 @@
         </div>
     {% endfor %}
 
-    <p>
+    <br />
     <nav>
       <ul class="pagination">
             <li

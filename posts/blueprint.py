@@ -40,7 +40,7 @@ def create_post():
 @posts.route('/<slug>/edit/', methods=['POST', 'GET'])
 @login_required
 def edit_post(slug):
-    post_to_edit = Post.query.filter(Post.slug == slug).first()
+    post_to_edit = Post.query.filter(Post.slug == slug).first_or_404()
     if request.method == 'POST':
         post_form = PostForm(formdata=request.form, obj=post_to_edit)
         post_form.populate_obj(post_to_edit)
@@ -68,7 +68,7 @@ def index():
 
 @posts.route('/<slug>')
 def open_post(slug):
-    post_to_open = Post.query.filter(Post.slug == slug).first()
+    post_to_open = Post.query.filter(Post.slug == slug).first_or_404()
     tags_to_show = post_to_open.tags
     return render_template('posts/open_post.html', post=post_to_open, tags=tags_to_show)
 
@@ -76,7 +76,7 @@ def open_post(slug):
 @posts.route('/tag/<slug>')
 def tag_detail(slug):
     tag_slug = slug
-    tag_to_open = Tag.query.filter(Tag.slug == slug).first()
+    tag_to_open = Tag.query.filter(Tag.slug == slug).first_or_404()
     posts_of_tag = Post.query.filter(Post.tags.contains(tag_to_open))
     curr_page = request.args.get('page')
     if curr_page and curr_page.isdigit():

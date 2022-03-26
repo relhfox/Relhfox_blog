@@ -7,6 +7,7 @@
 
 
 {% block content_title %}
+    <br />
     {{ post.title }}
 {% endblock %}
 
@@ -21,13 +22,13 @@
         {% endfor %}
     </div>
 
-    <div class="main-content">
-        {{ post.body }}
+    <div class="col-md-9">
+        {{ post.body|replace("\n", "<br />")|safe }}
 
         {% if current_user.has_role('admin') %}
-            <p>
-                <a href="{{ url_for('posts.edit_post', slug=post.slug) }}" class="btn btn-primary">Редактировать</a>
-            </p>
+            <br />
+            <br />
+            <a href="{{ url_for('posts.edit_post', slug=post.slug) }}" class="btn btn-primary">Редактировать</a>
         {% endif %}
     </div>
 

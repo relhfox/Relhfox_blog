@@ -7,12 +7,13 @@
 
 
 {% block content_title %}
+    <br />
     Создание нового поста
 {% endblock %}
 
 
 {% block content %}
-    <div class="col-md-6">
+    <div class="col-md-8">
         <form action="{{ url_for('posts.create_post') }}" method="POST">
 
             {% for field in form %}
@@ -22,6 +23,7 @@
                 </div>
             {% endfor %}
 
+            <br />
             <button type="submit" class="btn btn-primary">Создать</button>
         </form>
     </div>
