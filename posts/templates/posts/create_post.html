@@ -2,19 +2,34 @@
 
 
 {% block title %}
-    Создание поста
+    {% if post %}
+        Редактирование поста
+    {% else %}
+        Создание нового поста
+    {% endif %}
 {% endblock %}
 
 
 {% block content_title %}
     <br />
-    Создание нового поста
+    {% if post %}
+        Редактирование поста
+    {% else %}
+        Создание нового поста
+    {% endif %}
 {% endblock %}
 
 
 {% block content %}
+
     <div class="col-md-8">
-        <form action="{{ url_for('posts.create_post') }}" method="POST">
+
+        <form action="
+            {% if post %}
+                {{ url_for('posts.edit_post', slug=post.slug) }}
+            {% else %}
+                {{ url_for('posts.create_post') }}
+            {% endif %}" method="POST">
 
             {% for field in form %}
                 <div class="form-group">
@@ -24,7 +39,16 @@
             {% endfor %}
 
             <br />
-            <button type="submit" class="btn btn-primary">Создать</button>
+            <button type="submit" class="btn btn-primary">
+            {% if post %}
+                Подтвердить
+            {% else %}
+                Создать
+            {% endif %}
+            </button>
+
         </form>
+
     </div>
+
 {% endblock %}

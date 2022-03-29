@@ -2,7 +2,15 @@
 
 
 {% block title %}
-    Посты
+    {% if search %}
+        Все посты содержащие "{{ search }}"
+    {% elif tag %}
+        Все посты с тегом "{{ tag.name }}"
+    {% elif post %}
+        {{ post.title }}
+    {% else %}
+        Последние посты
+    {% endif %}
 {% endblock %}
 
 
@@ -10,6 +18,10 @@
     <br />
     {% if search %}
         Все посты содержащие "{{ search }}"
+    {% elif tag %}
+        Все посты с тегом "{{ tag.name }}"
+    {% elif post %}
+        {{ post.title }}
     {% else %}
         Последние посты
     {% endif %}
@@ -18,72 +30,92 @@
 
 {% block content %}
 
-    {% for post in pages.items %}
-        <br />
-        <div class="card w-75">
-          <div class="card-header">
-            <a href="{{ url_for('posts.open_post', slug=post.slug) }}">{{ post.created }}</a>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">{{ post.title }}</h5>
-            {% for tag in post.tags %}
-                <a href="{{ url_for('posts.tag_detail', slug=tag.slug) }}">
-                    <span class="badge bg-success">{{ tag.name }}</span>
-                </a>
+    {% if post and not search %}
+
+        <div class="tags">
+            {% for tag in tags %}
+                <a href="{{ url_for('posts.tag_detail', slug=tag.slug) }}"><span class="badge bg-success">{{ tag.name }}</span></a>
             {% endfor %}
-            <p class="card-text">{{ post.body|replace("\n", "<br />")|safe }}</p>
-            {% if current_user.has_role('admin') %}
-              <div class="d-flex justify-content-end">
-                <a href="{{ url_for('posts.edit_post', slug=post.slug) }}" class="btn btn-primary">Редактировать</a>
-              </div>
-            {% endif %}
-          </div>
         </div>
-    {% endfor %}
 
-    <br />
-    <nav>
-      <ul class="pagination">
-            <li
-                {% if not pages.has_prev %}
-                    class="page-item disabled"
-                {% endif %}>
-                <a class="page-link" href="./?page={{ pages.prev_num }}{% if search %}&search={{ search }}{% endif %}">
-                    Предыдущая
-                </a>
-            </li>
+        <div class="col-md-9">
+            {{ post.body|replace("\n", "<br />")|safe }}
 
-            {% for page in pages.iter_pages() %}
+            {% if current_user.has_role('admin') %}
+                <br />
+                <br />
+                <a href="{{ url_for('posts.edit_post', slug=post.slug) }}" class="btn btn-primary">Редактировать</a>
+            {% endif %}
+        </div>
 
-                {% if page != None %}
-                    <li
-                        {% if page == pages.page %}
-                            class="page-item active"
-                        {% endif %}
-                        aria-current="page">
-                        <a class="page-link" href="./?page={{ page }}{% if search %}&search={{ search }}{% endif %}">
-                            {{ page }}
-                        </a>
-                    </li>
+    {% else %}
 
-                {% else %}
-
-                    <li class="page-item disabled">
-                        <a class="page-link">...</a>
-                    </li>
+        {% for post in pages.items %}
+            <br />
+            <div class="card w-75">
+              <div class="card-header">
+                <a href="{{ url_for('posts.open_post', slug=post.slug) }}">{{ post.created }}</a>
+              </div>
+              <div class="card-body">
+                <h5 class="card-title">{{ post.title }}</h5>
+                {% for tag in post.tags %}
+                    <a href="{{ url_for('posts.tag_detail', slug=tag.slug) }}"><span class="badge bg-success">{{ tag.name }}</span></a>
+                {% endfor %}
+                <p class="card-text">{{ post.body|replace("\n", "<br />")|safe }}</p>
+                {% if current_user.has_role('admin') %}
+                  <div class="d-flex justify-content-end">
+                    <a href="{{ url_for('posts.edit_post', slug=post.slug) }}" class="btn btn-primary">Редактировать</a>
+                  </div>
                 {% endif %}
+              </div>
+            </div>
+        {% endfor %}
 
-            {% endfor %}
+        <br />
+        <nav>
+          <ul class="pagination">
+                <li
+                    {% if not pages.has_prev %}
+                        class="page-item disabled"
+                    {% endif %}>
+                    <a class="page-link" href="./{% if tag %}{{ slug }}{% endif %}?page={{ pages.prev_num }}{% if search %}&search={{ search }}{% endif %}">
+                        Предыдущая
+                    </a>
+                </li>
 
-            <li
-                {% if not pages.has_next %}
-                    class="page-item disabled"
-                {% endif %}>
-                <a class="page-link" href="./?page={{ pages.next_num }}{% if search %}&search={{ search }}{% endif %}">
-                    Следующая
-                </a>
-            </li>
-      </ul>
-    </nav>
+                {% for page in pages.iter_pages() %}
+
+                    {% if page != None %}
+                        <li
+                            {% if page == pages.page %}
+                                class="page-item active"
+                            {% endif %}
+                            aria-current="page">
+                            <a class="page-link" href="./{% if tag %}{{ slug }}{% endif %}?page={{ page }}{% if search %}&search={{ search }}{% endif %}">
+                                {{ page }}
+                            </a>
+                        </li>
+
+                    {% else %}
+
+                        <li class="page-item disabled">
+                            <a class="page-link">...</a>
+                        </li>
+                    {% endif %}
+
+                {% endfor %}
+
+                <li
+                    {% if not pages.has_next %}
+                        class="page-item disabled"
+                    {% endif %}>
+                    <a class="page-link" href="./{% if tag %}{{ slug }}{% endif %}?page={{ pages.next_num }}{% if search %}&search={{ search }}{% endif %}">
+                        Следующая
+                    </a>
+                </li>
+          </ul>
+        </nav>
+
+    {% endif %}
 
 {% endblock %}

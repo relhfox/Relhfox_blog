@@ -4,6 +4,7 @@ from flask import redirect
 from flask import url_for
 
 from flask_sqlalchemy import SQLAlchemy
+
 from config import Configuration
 
 from flask_migrate import Migrate
@@ -24,7 +25,9 @@ db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
 
-from models import *
+
+# importing here to avoid circular import exception
+from models import Post, Tag, User, Role
 
 
 class AdminMixin:

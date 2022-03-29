@@ -1,11 +1,13 @@
 from app import db
+
 from datetime import datetime
+
+from random import randint
+
 import re
 
 from flask_security import UserMixin
 from flask_security import RoleMixin
-
-from random import randint
 
 
 def slugify(string_to_slug):
