@@ -1,5 +1,7 @@
 # Relhfox_blog
 
+Demo video: https://youtu.be/IMkMUj965fw
+
 Relhfox_blog - is a simple blog script. You are free to use it as your personal blog (no commercial use allowed). You can change it, develop anyhow you like.
 
 It works as Flask app and uses Python interpreter on a server side, along with MySQL database. All the HTML/CSS part is made of Bootstrap components.
